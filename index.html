@@ -241,7 +241,7 @@
 
     <!-- 3D SAHNE -->
     <section class="body-panel">
-      <h2>3D Vücut Modeli</h2>
+      <h2>3D VÜCUT MODELİ</h2>
       <p class="body-sub">
         Fareyle sürükleyerek vücudu döndürebilir, kas bölgelerine tıklayarak sağ tarafta detaylarını görebilirsin.
       </p>
@@ -267,8 +267,8 @@
       <div class="info-section">
         <h3>Bu kasın temel görevi</h3>
         <p id="muscleFunction">
-          Ortadaki 3D modeli döndürerek vücudu farklı açılardan inceleyebilir, kaslara tıklayarak görevlerini öğrenebilirsin.
-          Model basitleştirilmiş olsa da kas grupları gerçek anatomi mantığına göre bölünmüştür.
+          Ortadaki 3D modeli döndürerek vücudu farklı açılardan inceleyebilir, kaslara tıklayarak görevlerini
+          öğrenebilirsin. Model basitleştirilmiş olsa da kas grupları gerçek anatomi mantığına göre bölünmüştür.
         </p>
       </div>
 
@@ -290,11 +290,11 @@
     </section>
   </main>
 
-  <!-- Three.js kodu -->
-  <script type="module">
-    import * as THREE from "https://unpkg.com/three@0.164.0/build/three.module.js";
-    import { OrbitControls } from "https://unpkg.com/three@0.164.0/examples/jsm/controls/OrbitControls.js";
+  <!-- Three.js CDN (module değil, klasik kullanım) -->
+  <script src="https://unpkg.com/three@0.164.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.164.0/examples/js/controls/OrbitControls.js"></script>
 
+  <script>
     // ---- DOM Referansları ----
     const container = document.getElementById("sceneContainer");
     const muscleNameEl = document.getElementById("muscleName");
@@ -431,9 +431,20 @@
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x020617);
 
+    function getContainerSize() {
+      let w = container.clientWidth;
+      let h = container.clientHeight;
+      if (!w || !h) {
+        w = 400;
+        h = 400;
+      }
+      return { w, h };
+    }
+
+    const size = getContainerSize();
     const camera = new THREE.PerspectiveCamera(
       40,
-      container.clientWidth / container.clientHeight,
+      size.w / size.h,
       0.1,
       100
     );
@@ -441,7 +452,7 @@
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setSize(size.w, size.h);
     container.appendChild(renderer.domElement);
 
     // Işıklar
@@ -456,12 +467,12 @@
     backLight.position.set(-2, 4, -4);
     scene.add(backLight);
 
-    // Zemin için hafif grid (sadece görsel)
+    // Zemin
     const grid = new THREE.GridHelper(8, 16, 0x1f2933, 0x111827);
     grid.position.y = -1.4;
     scene.add(grid);
 
-    // ---- Vücut Modeli (Basitleştirilmiş İnsan) ----
+    // ---- Vücut Modeli ----
     const bodyGroup = new THREE.Group();
     scene.add(bodyGroup);
 
@@ -469,7 +480,7 @@
 
     function createPart(geometry, color, muscleKey, position) {
       const mat = new THREE.MeshStandardMaterial({
-        color,
+        color: color,
         metalness: 0.05,
         roughness: 0.45
       });
@@ -481,7 +492,6 @@
       return mesh;
     }
 
-    // Gövde temel yüksekliği
     const torsoHeight = 1.6;
 
     // Göğüs / gövde
@@ -500,7 +510,7 @@
       new THREE.Vector3(0, torsoHeight - 0.6, 0)
     );
 
-    // Sırt (orta)
+    // Sırt
     createPart(
       new THREE.BoxGeometry(0.95, 0.5, 0.2),
       0x1e3a8a,
@@ -508,7 +518,7 @@
       new THREE.Vector3(0, torsoHeight + 0.1, -0.1)
     );
 
-    // Alt sırt / glute bölgesi
+    // Kalça / glute
     createPart(
       new THREE.BoxGeometry(0.8, 0.4, 0.4),
       0x4b5563,
@@ -524,7 +534,7 @@
       new THREE.Vector3(0, torsoHeight + 0.75, 0)
     );
 
-    // Omuzlar (sağ-sol, shoulders)
+    // Omuzlar
     createPart(
       new THREE.BoxGeometry(0.3, 0.25, 0.35),
       0x2563eb,
@@ -538,7 +548,7 @@
       new THREE.Vector3(0.6, torsoHeight + 0.2, 0)
     );
 
-    // Üst kollar (biceps/triceps birlikte)
+    // Üst kollar (biceps)
     createPart(
       new THREE.CapsuleGeometry(0.16, 0.55, 16, 24),
       0x22c55e,
@@ -552,7 +562,7 @@
       new THREE.Vector3(0.95, torsoHeight - 0.1, 0)
     );
 
-    // Alt kollar (triceps ağırlıklı düşün)
+    // Alt kollar (triceps)
     createPart(
       new THREE.CapsuleGeometry(0.14, 0.5, 16, 24),
       0x16a34a,
@@ -566,7 +576,7 @@
       new THREE.Vector3(0.95, torsoHeight - 0.8, 0)
     );
 
-    // Üst bacaklar (quads)
+    // Üst bacak (quads)
     createPart(
       new THREE.CapsuleGeometry(0.22, 0.8, 16, 24),
       0xf97316,
@@ -580,7 +590,7 @@
       new THREE.Vector3(0.3, torsoHeight - 1.6, 0.05)
     );
 
-    // Arka uyluk (hamstring) - biraz arkaya konumlandır
+    // Arka uyluk (hamstring)
     createPart(
       new THREE.CapsuleGeometry(0.19, 0.7, 16, 24),
       0xc2410c,
@@ -594,7 +604,7 @@
       new THREE.Vector3(0.3, torsoHeight - 1.7, -0.18)
     );
 
-    // Baldırlar (calves)
+    // Baldırlar
     createPart(
       new THREE.CapsuleGeometry(0.16, 0.6, 16, 24),
       0x65a30d,
@@ -608,26 +618,20 @@
       new THREE.Vector3(0.3, torsoHeight - 2.45, 0)
     );
 
-    // Vücudu biraz yukarı al
     bodyGroup.position.y = -0.3;
 
-    // ---- Orbit Controls (Fare ile döndürme) ----
-    const controls = new OrbitControls(camera, renderer.domElement);
+    // ---- Orbit Controls ----
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.target.set(0, torsoHeight - 0.3, 0);
-
-    // Fazla zoom'u engelle
     controls.minDistance = 3;
     controls.maxDistance = 8;
-
-    // Döndürme sınırı (yukarıdan/alt açıdan çok bozulmasın)
     controls.minPolarAngle = Math.PI * 0.15;
     controls.maxPolarAngle = Math.PI * 0.85;
 
-    // ---- Raycaster (tıklama ile kas seçimi) ----
+    // ---- Raycaster ----
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
-
     let autoRotate = true;
 
     function clearSelection() {
@@ -673,7 +677,7 @@
       muscleNameEl.textContent = "Bir bölge seç";
       muscleLatinEl.textContent = "Göğüs, sırt, omuz, kol, bacak gibi bölgelerin üzerine tıkla.";
       muscleFunctionEl.textContent =
-        "Ortadaki 3D modeli döndürerek vücudu farklı açılardan inceleyebilir, kaslara tıklayarak görevlerini öğrenebilirsin.";
+        "Ortadaki 3D modeli döndürerek vücudu farklı açılardan inceleyebilir, kaslara tıklayarak görevlerini öğrenebilirsin. Model basitleştirilmiş olsa da kas grupları gerçek anatomi mantığına göre bölünmüştür.";
       muscleBenefitsEl.innerHTML = "";
       const li1 = document.createElement("li");
       li1.textContent =
@@ -693,7 +697,6 @@
       });
     }
 
-    // Tıklama olayı
     function onClick(event) {
       const rect = renderer.domElement.getBoundingClientRect();
       mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
@@ -716,8 +719,6 @@
     }
 
     renderer.domElement.addEventListener("click", onClick);
-
-    // Eğer kullanıcı modeli oynatıyorsa otomatik dönmeyi biraz durdur
     controls.addEventListener("start", () => {
       autoRotate = false;
     });
@@ -735,12 +736,12 @@
     }
     animate();
 
-    // ---- Yeniden boyutlandırma ----
+    // ---- Resize ----
     window.addEventListener("resize", () => {
-      const { clientWidth, clientHeight } = container;
-      camera.aspect = clientWidth / clientHeight;
+      const s = getContainerSize();
+      camera.aspect = s.w / s.h;
       camera.updateProjectionMatrix();
-      renderer.setSize(clientWidth, clientHeight);
+      renderer.setSize(s.w, s.h);
     });
   </script>
 </body>

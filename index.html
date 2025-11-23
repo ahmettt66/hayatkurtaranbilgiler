@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <title>Kas Haritası</title>
+  <title>Kas Haritası – Ön & Arka Görünüm</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     * {
@@ -94,6 +94,33 @@
       color: #9ca3af;
     }
 
+    .view-toggle {
+      margin-top: 8px;
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 3px;
+      background: rgba(15,23,42,0.85);
+      border: 1px solid rgba(75, 85, 99, 0.9);
+      width: fit-content;
+    }
+
+    .view-btn {
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: transparent;
+      color: #9ca3af;
+      transition: background 0.16s ease, color 0.16s ease;
+    }
+
+    .view-btn.active {
+      background: rgba(34,197,94,0.15);
+      color: #e5e7eb;
+    }
+
     .body-wrapper {
       flex: 1;
       display: flex;
@@ -110,7 +137,7 @@
     .muscle-region {
       fill: rgba(59, 130, 246, 0.08);
       stroke: rgba(148, 163, 184, 0.8);
-      stroke-width: 1.2;
+      stroke-width: 1.1;
       cursor: pointer;
       transition: fill 0.18s ease, stroke 0.18s ease, transform 0.12s ease;
     }
@@ -132,6 +159,10 @@
       fill: #e5e7eb;
       pointer-events: none;
       letter-spacing: 0.06em;
+    }
+
+    [data-view="back"] {
+      display: none;
     }
 
     .info-panel {
@@ -251,94 +282,205 @@
     <header>
       <h1>
         Etkileşimli Kas Haritası
-        <span>Üzerine tıkla, ne işe yaradığını gör.</span>
+        <span>Ön &amp; arka görünüm, kasların görevi ve etkileri.</span>
       </h1>
-      <div class="tag">Front &amp; basic muscle groups</div>
+      <div class="tag">Front + Back • Basic anatomy</div>
     </header>
 
     <!-- Beden / Kas Haritası -->
     <section class="body-panel">
-      <h2>Ön Görünüm • Kollar Açık</h2>
-      <div class="body-wrapper">
-        <!-- Basit stilize SVG beden -->
-        <svg viewBox="0 0 220 400" aria-labelledby="title desc" role="img">
-          <title id="title">Kas Haritası</title>
-          <desc id="desc">Önden görünüş, kollar açık, basit kas bölgeleri.</desc>
+      <h2>Görünüm • Kollar Açık</h2>
 
-          <!-- Gövde konturu (sadece estetik) -->
+      <div class="view-toggle">
+        <button class="view-btn active" data-target="front">Ön</button>
+        <button class="view-btn" data-target="back">Arka (Sırt &amp; Kalça)</button>
+      </div>
+
+      <!-- ÖN GÖRÜNÜM -->
+      <div class="body-wrapper" data-view="front">
+        <svg viewBox="0 0 220 400" aria-labelledby="titleFront descFront" role="img">
+          <title id="titleFront">Ön Kas Haritası</title>
+          <desc id="descFront">Önden görünüş, kollar açık, temel kas bölgeleri.</desc>
+
+          <!-- Daha gerçekçi gövde konturu -->
           <path
-            d="M110 20
-               C 95 40, 80 65, 80 90
-               L 80 130
-               C 78 150, 78 170, 80 185
-               L 80 240
-               C 78 270, 80 300, 88 330
-               L 95 360
-               L 125 360
-               L 132 330
-               C 140 300, 142 270, 140 240
-               L 140 185
-               C 142 170, 142 150, 140 130
-               L 140 90
-               C 140 65, 125 40, 110 20 Z"
-            fill="rgba(15,23,42,0.7)"
-            stroke="rgba(148,163,184,0.6)"
+            d="M110 22
+               C 96 30, 86 45, 82 63
+               C 78 80, 78 95, 79 110
+               L 80 135
+               C 79 155, 79 175, 82 192
+               C 84 205, 84 220, 83 235
+               C 82 255, 84 278, 90 300
+               L 98 340
+               Q 104 360 110 360
+               Q 116 360 122 340
+               L 130 300
+               C 136 278, 138 255, 137 235
+               C 136 220, 136 205, 138 192
+               C 141 175, 141 155, 140 135
+               L 141 110
+               C 142 95, 142 80, 138 63
+               C 134 45, 124 30, 110 22 Z"
+            fill="rgba(15,23,42,0.8)"
+            stroke="rgba(148,163,184,0.7)"
             stroke-width="1.2"
           />
 
           <!-- Baş -->
-          <circle cx="110" cy="35" r="18" fill="rgba(15,23,42,0.9)" stroke="rgba(148,163,184,0.6)" stroke-width="1.2"/>
+          <circle cx="110" cy="36" r="17"
+                  fill="rgba(15,23,42,0.9)"
+                  stroke="rgba(148,163,184,0.7)"
+                  stroke-width="1.2"/>
 
           <!-- Kollar -->
           <!-- Sol omuz + kol -->
-          <rect class="muscle-region" data-muscle="shoulders"
-                x="40" y="85" width="30" height="22" rx="6" ry="6" />
+          <path class="muscle-region" data-muscle="shoulders"
+                d="M76 80 L54 82 Q46 84 42 92 Q40 96 41 102 L64 100 Q75 98 80 92 Z" />
           <rect class="muscle-region" data-muscle="biceps"
-                x="30" y="107" width="24" height="55" rx="10" ry="10" />
+                x="34" y="104" width="24" height="56" rx="11" ry="11" />
           <rect class="muscle-region" data-muscle="triceps"
-                x="32" y="162" width="22" height="55" rx="10" ry="10" />
+                x="32" y="160" width="25" height="58" rx="11" ry="11" />
 
           <!-- Sağ omuz + kol -->
-          <rect class="muscle-region" data-muscle="shoulders"
-                x="150" y="85" width="30" height="22" rx="6" ry="6" />
+          <path class="muscle-region" data-muscle="shoulders"
+                d="M144 80 L166 82 Q174 84 178 92 Q180 96 179 102 L156 100 Q145 98 140 92 Z" />
           <rect class="muscle-region" data-muscle="biceps"
-                x="166" y="107" width="24" height="55" rx="10" ry="10" />
+                x="162" y="104" width="24" height="56" rx="11" ry="11" />
           <rect class="muscle-region" data-muscle="triceps"
-                x="166" y="162" width="22" height="55" rx="10" ry="10" />
+                x="163" y="160" width="25" height="58" rx="11" ry="11" />
 
-          <!-- Göğüs -->
-          <rect class="muscle-region" data-muscle="chest"
-                x="83" y="88" width="54" height="30" rx="8" ry="8" />
+          <!-- Göğüs (hafif üçgen şekil) -->
+          <path class="muscle-region" data-muscle="chest"
+                d="M86 88 Q110 80 134 88
+                   Q138 94 136 102
+                   Q123 110 110 112
+                   Q97 110 84 102
+                   Q82 94 86 88 Z" />
 
-          <!-- Üst karın (üst abdominal) -->
+          <!-- Üst karın -->
           <rect class="muscle-region" data-muscle="abs"
-                x="90" y="125" width="40" height="26" rx="6" ry="6" />
+                x="92" y="122" width="37" height="27" rx="6" ry="6" />
           <!-- Orta karın -->
           <rect class="muscle-region" data-muscle="abs"
-                x="90" y="153" width="40" height="28" rx="6" ry="6" />
+                x="92" y="151" width="37" height="28" rx="6" ry="6" />
           <!-- Alt karın -->
           <rect class="muscle-region" data-muscle="abs"
-                x="90" y="183" width="40" height="28" rx="6" ry="6" />
+                x="92" y="181" width="37" height="28" rx="6" ry="6" />
 
-          <!-- Kalça / Glute -->
-          <rect class="muscle-region" data-muscle="glutes"
-                x="88" y="213" width="44" height="26" rx="10" ry="10" />
+          <!-- Ön kalça / kasık bölgesi (hip flexors) -->
+          <path class="muscle-region" data-muscle="hip"
+                d="M89 209 Q110 217 131 209
+                   Q133 215 132 221
+                   Q122 228 110 230
+                   Q98 228 88 221
+                   Q87 215 89 209 Z" />
 
           <!-- Uyluk (quadriceps) -->
           <rect class="muscle-region" data-muscle="quads"
-                x="88" y="241" width="20" height="60" rx="8" ry="8" />
+                x="88"  y="232" width="21" height="64" rx="9" ry="9" />
           <rect class="muscle-region" data-muscle="quads"
-                x="112" y="241" width="20" height="60" rx="8" ry="8" />
+                x="111" y="232" width="21" height="64" rx="9" ry="9" />
 
           <!-- Baldır (calves) -->
           <rect class="muscle-region" data-muscle="calves"
-                x="90" y="303" width="18" height="50" rx="8" ry="8" />
+                x="90"  y="300" width="18" height="52" rx="8" ry="8" />
           <rect class="muscle-region" data-muscle="calves"
-                x="114" y="303" width="18" height="50" rx="8" ry="8" />
+                x="112" y="300" width="18" height="52" rx="8" ry="8" />
 
-          <!-- Küçük label -->
           <text x="110" y="390" text-anchor="middle" class="body-label">
-            Kas gruplarının üzerine tıkla
+            Ön görünüm • Kas gruplarına tıkla
+          </text>
+        </svg>
+      </div>
+
+      <!-- ARKA GÖRÜNÜM -->
+      <div class="body-wrapper" data-view="back">
+        <svg viewBox="0 0 220 400" aria-labelledby="titleBack descBack" role="img">
+          <title id="titleBack">Arka Kas Haritası</title>
+          <desc id="descBack">Arkadan görünüş, sırt, kalça ve arka bacak kasları.</desc>
+
+          <!-- Gövde konturu (arka, biraz daha geniş omuz, dar bel) -->
+          <path
+            d="M110 22
+               C 95 32, 85 48, 80 66
+               C 76 82, 76 98, 77 113
+               L 78 138
+               C 77 160, 77 180, 80 197
+               C 82 210, 82 224, 81 238
+               C 80 258, 83 282, 90 305
+               L 98 344
+               Q 104 364 110 364
+               Q 116 364 122 344
+               L 130 305
+               C 137 282, 140 258, 139 238
+               C 138 224, 138 210, 140 197
+               C 143 180, 143 160, 142 138
+               L 143 113
+               C 144 98, 144 82, 140 66
+               C 135 48, 125 32, 110 22 Z"
+            fill="rgba(15,23,42,0.8)"
+            stroke="rgba(148,163,184,0.7)"
+            stroke-width="1.2"
+          />
+
+          <!-- Baş (arka) -->
+          <circle cx="110" cy="36" r="17"
+                  fill="rgba(15,23,42,0.9)"
+                  stroke="rgba(148,163,184,0.7)"
+                  stroke-width="1.2"/>
+
+          <!-- Omuz & trapez -->
+          <path class="muscle-region" data-muscle="back"
+                d="M86 70 Q110 55 134 70
+                   Q130 82 124 90
+                   Q110 96 96 90
+                   Q90 82 86 70 Z" />
+
+          <!-- Kanat (latissimus dorsi / sırt yanları) -->
+          <path class="muscle-region" data-muscle="back"
+                d="M82 90
+                   Q70 112 68 136
+                   Q69 150 73 162
+                   Q83 168 90 170
+                   Q96 158 100 143
+                   Q100 128 98 116 Z" />
+          <path class="muscle-region" data-muscle="back"
+                d="M138 90
+                   Q150 112 152 136
+                   Q151 150 147 162
+                   Q137 168 130 170
+                   Q124 158 120 143
+                   Q120 128 122 116 Z" />
+
+          <!-- Alt sırt (erector spinae) -->
+          <rect class="muscle-region" data-muscle="lowerBack"
+                x="94" y="150" width="32" height="40" rx="7" ry="7" />
+
+          <!-- Kalça (glutes) -->
+          <path class="muscle-region" data-muscle="glutes"
+                d="M88 190
+                   Q99 204 110 206
+                   Q121 204 132 190
+                   Q136 196 137 204
+                   Q132 218 121 228
+                   Q110 232 99 228
+                   Q88 218 83 204
+                   Q84 196 88 190 Z" />
+
+          <!-- Hamstring (arka uyluk) -->
+          <rect class="muscle-region" data-muscle="hamstrings"
+                x="88"  y="228" width="20" height="64" rx="9" ry="9" />
+          <rect class="muscle-region" data-muscle="hamstrings"
+                x="112" y="228" width="20" height="64" rx="9" ry="9" />
+
+          <!-- Baldır (arka) -->
+          <rect class="muscle-region" data-muscle="calves"
+                x="90"  y="296" width="18" height="52" rx="8" ry="8" />
+          <rect class="muscle-region" data-muscle="calves"
+                x="112" y="296" width="18" height="52" rx="8" ry="8" />
+
+          <text x="110" y="390" text-anchor="middle" class="body-label">
+            Arka görünüm • Sırt, kalça ve arka bacak kasları
           </text>
         </svg>
       </div>
@@ -350,7 +492,7 @@
         <div class="info-header-title">
           <div class="info-muscle-name" id="muscleName">Bir kas grubu seç</div>
           <div class="info-muscle-sub" id="muscleLatin">
-            Gövdeden veya kolların üzerinden herhangi bir bölgeye tıkla.
+            Ön veya arka görünümden bir bölgeye tıkla.
           </div>
         </div>
         <div class="chip-row" id="chipRow">
@@ -363,22 +505,22 @@
       <div class="info-section">
         <h3>Bu kasın temel görevi</h3>
         <p id="muscleFunction">
-          Her kas grubunun duruş, hareket ve performansa katkısı farklıdır. 
-          Vücuttaki kasların ne işe yaradığını keşfetmek için soldaki haritadan bir bölge seç.
+          Kaslara tıkladıkça, duruş, hareket ve spor performansındaki görevlerini burada göreceksin.
+          Ön/arka görünüm arasında geçiş yaparak vücudu daha bütünsel görebilirsin.
         </p>
       </div>
 
       <div class="info-section">
         <h3>Bu kasları çalıştırırsan neler olur?</h3>
         <ul id="muscleBenefits">
-          <li>Güç, görünüm ve sağlığın üzerindeki etkilerini burada göreceksin.</li>
-          <li>Kasların hangi hareketlerde aktif olduğunu ve günlük hayata etkisini öğrenebilirsin.</li>
+          <li>Güç, estetik ve sağlık etkilerini liste halinde gösterir.</li>
+          <li>Hangi hareketlerde aktif olduğunu öğrenip antrenman planını buna göre kurabilirsin.</li>
         </ul>
       </div>
 
       <p class="hint">
-        İpucu: Aynı kas grubuna tekrar tıklayarak farklı bölgelerle kıyaslayabilir, 
-        hangi bölgeye odaklanmak istediğine karar verebilirsin.
+        İpucu: Aynı kas grubuna ait birden fazla bölge varsa (örneğin sağ/sol baldır),
+        tıkladığında hepsi birlikte vurgulanır.
       </p>
 
       <p class="footer-note">
@@ -393,13 +535,13 @@
         name: "Göğüs Kasları",
         latin: "Pectoralis Major / Minor",
         function:
-          "Göğüs kasları, itme hareketlerinin ana motorudur. Kollarını öne doğru iterken, şınav, bench press ve göğüs fly gibi hareketlerde yoğun olarak çalışır. Omuz ekleminin öne ve içe doğru hareketinde büyük rol oynar.",
+          "Göğüs kasları, itme hareketlerinin ana motorudur. Kollarını öne doğru iterken, şınav, bench press ve göğüs fly gibi hareketlerde yoğun olarak çalışır.",
         tags: ["İtme gücü", "Üst vücut genişliği", "Postür"],
         benefits: [
           "Üst vücudu daha dolu ve atletik gösterir.",
           "Şınav, bench press gibi itiş kuvveti gerektiren hareketlerde performansı artırır.",
           "Omuz çevresini destekleyerek üst beden stabilitesine katkı sağlar.",
-          "Sporlarda (boks, basketbol, voleybol gibi) itme ve şut atma hareketlerinde güç kazandırır."
+          "Boks, basketbol, voleybol gibi sporlarda itme ve şut atma hareketlerinde güç kazandırır."
         ]
       },
       shoulders: {
@@ -454,6 +596,18 @@
           "Yağ oranı düştüğünde estetik olarak “baklava” görüntüsü oluşturur."
         ]
       },
+      hip: {
+        name: "Ön Kalça / Kasık Bölgesi",
+        latin: "Hip Flexors",
+        function:
+          "Kalça fleksörleri, bacağı öne doğru kaldırma hareketinde aktiftir. Koşu, sprint ve yüksek diz kaldırmalı hareketlerde önemli rol oynar.",
+        tags: ["Koşu mekaniği", "Diz kaldırma", "Hız"],
+        benefits: [
+          "Koşu tekniğini ve adım frekansını iyileştirmeye yardımcı olur.",
+          "Sıçrama ve sprint başlangıcında patlayıcı güce destek sağlar.",
+          "Uzun süre oturan kişilerde sıkılan bölge olduğu için esnetilip güçlendirilmesi duruşu iyileştirir."
+        ]
+      },
       glutes: {
         name: "Kalça Kasları",
         latin: "Gluteus Maximus / Medius",
@@ -485,12 +639,50 @@
         latin: "Gastrocnemius & Soleus",
         function:
           "Baldır kasları, ayak bileğini aşağı doğru itmekten sorumludur. Yürüme, koşma, zıplama ve denge için kritik önem taşır.",
-        tags: ["Denge", "Patlayıcı güç", "Estetik detay"],
+        tags: ["Denge", "Patlayıcı güç", "Detay estetik"],
         benefits: [
           "Koşu ve sprint performansını artırır, yön değiştirmeyi kolaylaştırır.",
           "Ayakta uzun süre dururken dengeyi ve konforu artırır.",
           "Zıplama yüksekliği ve patlayıcı güce katkı sağlar.",
           "Bacak estetiğinde alt kısmın dolu ve oranlı görünmesini sağlar."
+        ]
+      },
+      back: {
+        name: "Üst & Orta Sırt Kasları",
+        latin: "Trapezius, Rhomboids, Latissimus",
+        function:
+          "Sırt kasları, kürek kemiklerinin hareketi ve omurganın dik durmasından sorumludur. Çekiş hareketlerinin büyük çoğunluğunda (barfiks, row) aktiftir.",
+        tags: ["Duruş", "Çekiş gücü", "Genişlik"],
+        benefits: [
+          "Daha dik bir duruş ve daha geniş bir üst vücut sağlar.",
+          "Barfiks, row gibi çekiş egzersizlerinde güç ve tekrar sayısını artırır.",
+          "Omuz sağlığını destekleyerek öne düşmüş omuz postürünü düzeltmeye yardımcı olur.",
+          "Kanat kasları geliştiğinde arkadan V şekli görünümünü güçlendirir."
+        ]
+      },
+      lowerBack: {
+        name: "Alt Sırt Kasları",
+        latin: "Erector Spinae",
+        function:
+          "Alt sırt kasları, omurgayı dik ve stabil tutar. Özellikle hinge hareketlerinde (deadlift, good morning) kritik görev üstlenir.",
+        tags: ["Core arka tarafı", "Stabilite", "Bel sağlığı"],
+        benefits: [
+          "Ağır kaldırışlarda gövdenin öne katlanmasını engelleyerek güvenli formu destekler.",
+          "Uzun süre ayakta durma veya oturmada belin daha az yorulmasına yardımcı olur.",
+          "Hareket sırasında omurgayı kontrol altında tutarak sakatlık riskini azaltır."
+        ]
+      },
+      hamstrings: {
+        name: "Arka Uyluk (Hamstring)",
+        latin: "Biceps Femoris, Semitendinosus, Semimembranosus",
+        function:
+          "Hamstring kasları diz eklemini bükme ve kalçayı geriye açma hareketlerinden sorumludur. Koşu, sprint ve zıplama için temel kas grubudur.",
+        tags: ["Hız", "Patlayıcı güç", "Denge"],
+        benefits: [
+          "Koşu hızını ve sprint patlayıcılığını ciddi şekilde etkiler.",
+          "Squat ve deadlift gibi hareketlerde kalça itişine destek olur.",
+          "Diz eklemini arka taraftan destekleyerek sakatlık riskini azaltır.",
+          "Bacağın arka tarafını doldurarak daha dengeli bir bacak estetiği sağlar."
         ]
       }
     };
@@ -507,17 +699,14 @@
       regions.forEach((r) => r.classList.remove("active"));
     }
 
-    function renderMuscle(muscleKey, targetRegion) {
+    function renderMuscle(muscleKey) {
       const data = muscleData[muscleKey];
       if (!data) return;
 
       clearActive();
-      if (targetRegion) {
-        // Aynı kas grubuna ait tüm bölgeleri aktif yap
-        regions.forEach((r) => {
-          if (r.dataset.muscle === muscleKey) r.classList.add("active");
-        });
-      }
+      regions.forEach((r) => {
+        if (r.dataset.muscle === muscleKey) r.classList.add("active");
+      });
 
       muscleNameEl.textContent = data.name;
       muscleLatinEl.textContent = data.latin;
@@ -542,7 +731,31 @@
     regions.forEach((region) => {
       region.addEventListener("click", () => {
         const key = region.dataset.muscle;
-        renderMuscle(key, region);
+        renderMuscle(key);
+      });
+    });
+
+    // Ön / Arka görünüm butonları
+    const viewButtons = document.querySelectorAll(".view-btn");
+    const frontWrapper = document.querySelector('[data-view="front"]');
+    const backWrapper  = document.querySelector('[data-view="back"]');
+
+    viewButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const target = btn.dataset.target;
+
+        viewButtons.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        if (target === "front") {
+          frontWrapper.style.display = "flex";
+          backWrapper.style.display = "none";
+        } else {
+          frontWrapper.style.display = "none";
+          backWrapper.style.display = "flex";
+        }
+
+        clearActive();
       });
     });
   </script>

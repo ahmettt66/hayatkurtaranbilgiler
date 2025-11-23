@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <title>Kas Haritası – Ön & Arka Görünüm</title>
+  <title>3D Kas Haritası – Dönen Vücut</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     * {
@@ -24,13 +24,13 @@
 
     .app {
       width: 100%;
-      max-width: 1100px;
-      background: rgba(15, 23, 42, 0.95);
+      max-width: 1150px;
+      background: rgba(15, 23, 42, 0.96);
       border-radius: 24px;
       box-shadow: 0 25px 60px rgba(0,0,0,0.6);
       padding: 24px;
       display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.4fr);
       gap: 24px;
       border: 1px solid rgba(148, 163, 184, 0.3);
       backdrop-filter: blur(14px);
@@ -39,6 +39,9 @@
     @media (max-width: 900px) {
       .app {
         grid-template-columns: 1fr;
+      }
+      #sceneContainer {
+        height: 360px;
       }
     }
 
@@ -76,13 +79,13 @@
     }
 
     .body-panel {
-      background: radial-gradient(circle at top, rgba(148,163,184,0.1), rgba(15,23,42,1));
+      background: radial-gradient(circle at top, rgba(148,163,184,0.12), rgba(15,23,42,1));
       border-radius: 20px;
-      padding: 18px;
+      padding: 16px;
       border: 1px solid rgba(55, 65, 81, 0.9);
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
       position: relative;
       overflow: hidden;
     }
@@ -94,75 +97,20 @@
       color: #9ca3af;
     }
 
-    .view-toggle {
-      margin-top: 8px;
-      display: inline-flex;
-      align-items: center;
-      border-radius: 999px;
-      padding: 3px;
-      background: rgba(15,23,42,0.85);
-      border: 1px solid rgba(75, 85, 99, 0.9);
-      width: fit-content;
-    }
-
-    .view-btn {
-      font-size: 0.8rem;
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: none;
-      cursor: pointer;
-      background: transparent;
+    .body-sub {
+      font-size: 0.78rem;
       color: #9ca3af;
-      transition: background 0.16s ease, color 0.16s ease;
     }
 
-    .view-btn.active {
-      background: rgba(34,197,94,0.15);
-      color: #e5e7eb;
-    }
-
-    .body-wrapper {
+    #sceneContainer {
       flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: 8px;
-    }
-
-    svg {
-      max-width: 100%;
-      height: auto;
-    }
-
-    .muscle-region {
-      fill: rgba(59, 130, 246, 0.08);
-      stroke: rgba(148, 163, 184, 0.8);
-      stroke-width: 1.1;
-      cursor: pointer;
-      transition: fill 0.18s ease, stroke 0.18s ease, transform 0.12s ease;
-    }
-
-    .muscle-region:hover {
-      fill: rgba(59, 130, 246, 0.40);
-      stroke: rgba(191, 219, 254, 1);
-      transform: translateY(-1px);
-    }
-
-    .muscle-region.active {
-      fill: rgba(34, 197, 94, 0.50);
-      stroke: rgba(220, 252, 231, 1);
-      stroke-width: 1.6;
-    }
-
-    .body-label {
-      font-size: 8px;
-      fill: #e5e7eb;
-      pointer-events: none;
-      letter-spacing: 0.06em;
-    }
-
-    [data-view="back"] {
-      display: none;
+      margin-top: 6px;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(55,65,81,0.8);
+      background: radial-gradient(circle at top, #020617, #020617);
+      min-height: 420px;
+      position: relative;
     }
 
     .info-panel {
@@ -216,6 +164,8 @@
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
+      position: relative;
+      z-index: 1;
     }
 
     .chip {
@@ -265,6 +215,8 @@
       font-size: 0.78rem;
       color: #9ca3af;
       margin-top: 4px;
+      position: relative;
+      z-index: 1;
     }
 
     .footer-note {
@@ -281,218 +233,28 @@
   <main class="app">
     <header>
       <h1>
-        Etkileşimli Kas Haritası
-        <span>Ön &amp; arka görünüm, kasların görevi ve etkileri.</span>
+        3D Etkileşimli Kas Haritası
+        <span>Vücudu döndür, kasların ne işe yaradığını gör.</span>
       </h1>
-      <div class="tag">Front + Back • Basic anatomy</div>
+      <div class="tag">Three.js • Döndürülebilir model</div>
     </header>
 
-    <!-- Beden / Kas Haritası -->
+    <!-- 3D SAHNE -->
     <section class="body-panel">
-      <h2>Görünüm • Kollar Açık</h2>
-
-      <div class="view-toggle">
-        <button class="view-btn active" data-target="front">Ön</button>
-        <button class="view-btn" data-target="back">Arka (Sırt &amp; Kalça)</button>
-      </div>
-
-      <!-- ÖN GÖRÜNÜM -->
-      <div class="body-wrapper" data-view="front">
-        <svg viewBox="0 0 220 400" aria-labelledby="titleFront descFront" role="img">
-          <title id="titleFront">Ön Kas Haritası</title>
-          <desc id="descFront">Önden görünüş, kollar açık, temel kas bölgeleri.</desc>
-
-          <!-- Daha gerçekçi gövde konturu -->
-          <path
-            d="M110 22
-               C 96 30, 86 45, 82 63
-               C 78 80, 78 95, 79 110
-               L 80 135
-               C 79 155, 79 175, 82 192
-               C 84 205, 84 220, 83 235
-               C 82 255, 84 278, 90 300
-               L 98 340
-               Q 104 360 110 360
-               Q 116 360 122 340
-               L 130 300
-               C 136 278, 138 255, 137 235
-               C 136 220, 136 205, 138 192
-               C 141 175, 141 155, 140 135
-               L 141 110
-               C 142 95, 142 80, 138 63
-               C 134 45, 124 30, 110 22 Z"
-            fill="rgba(15,23,42,0.8)"
-            stroke="rgba(148,163,184,0.7)"
-            stroke-width="1.2"
-          />
-
-          <!-- Baş -->
-          <circle cx="110" cy="36" r="17"
-                  fill="rgba(15,23,42,0.9)"
-                  stroke="rgba(148,163,184,0.7)"
-                  stroke-width="1.2"/>
-
-          <!-- Kollar -->
-          <!-- Sol omuz + kol -->
-          <path class="muscle-region" data-muscle="shoulders"
-                d="M76 80 L54 82 Q46 84 42 92 Q40 96 41 102 L64 100 Q75 98 80 92 Z" />
-          <rect class="muscle-region" data-muscle="biceps"
-                x="34" y="104" width="24" height="56" rx="11" ry="11" />
-          <rect class="muscle-region" data-muscle="triceps"
-                x="32" y="160" width="25" height="58" rx="11" ry="11" />
-
-          <!-- Sağ omuz + kol -->
-          <path class="muscle-region" data-muscle="shoulders"
-                d="M144 80 L166 82 Q174 84 178 92 Q180 96 179 102 L156 100 Q145 98 140 92 Z" />
-          <rect class="muscle-region" data-muscle="biceps"
-                x="162" y="104" width="24" height="56" rx="11" ry="11" />
-          <rect class="muscle-region" data-muscle="triceps"
-                x="163" y="160" width="25" height="58" rx="11" ry="11" />
-
-          <!-- Göğüs (hafif üçgen şekil) -->
-          <path class="muscle-region" data-muscle="chest"
-                d="M86 88 Q110 80 134 88
-                   Q138 94 136 102
-                   Q123 110 110 112
-                   Q97 110 84 102
-                   Q82 94 86 88 Z" />
-
-          <!-- Üst karın -->
-          <rect class="muscle-region" data-muscle="abs"
-                x="92" y="122" width="37" height="27" rx="6" ry="6" />
-          <!-- Orta karın -->
-          <rect class="muscle-region" data-muscle="abs"
-                x="92" y="151" width="37" height="28" rx="6" ry="6" />
-          <!-- Alt karın -->
-          <rect class="muscle-region" data-muscle="abs"
-                x="92" y="181" width="37" height="28" rx="6" ry="6" />
-
-          <!-- Ön kalça / kasık bölgesi (hip flexors) -->
-          <path class="muscle-region" data-muscle="hip"
-                d="M89 209 Q110 217 131 209
-                   Q133 215 132 221
-                   Q122 228 110 230
-                   Q98 228 88 221
-                   Q87 215 89 209 Z" />
-
-          <!-- Uyluk (quadriceps) -->
-          <rect class="muscle-region" data-muscle="quads"
-                x="88"  y="232" width="21" height="64" rx="9" ry="9" />
-          <rect class="muscle-region" data-muscle="quads"
-                x="111" y="232" width="21" height="64" rx="9" ry="9" />
-
-          <!-- Baldır (calves) -->
-          <rect class="muscle-region" data-muscle="calves"
-                x="90"  y="300" width="18" height="52" rx="8" ry="8" />
-          <rect class="muscle-region" data-muscle="calves"
-                x="112" y="300" width="18" height="52" rx="8" ry="8" />
-
-          <text x="110" y="390" text-anchor="middle" class="body-label">
-            Ön görünüm • Kas gruplarına tıkla
-          </text>
-        </svg>
-      </div>
-
-      <!-- ARKA GÖRÜNÜM -->
-      <div class="body-wrapper" data-view="back">
-        <svg viewBox="0 0 220 400" aria-labelledby="titleBack descBack" role="img">
-          <title id="titleBack">Arka Kas Haritası</title>
-          <desc id="descBack">Arkadan görünüş, sırt, kalça ve arka bacak kasları.</desc>
-
-          <!-- Gövde konturu (arka, biraz daha geniş omuz, dar bel) -->
-          <path
-            d="M110 22
-               C 95 32, 85 48, 80 66
-               C 76 82, 76 98, 77 113
-               L 78 138
-               C 77 160, 77 180, 80 197
-               C 82 210, 82 224, 81 238
-               C 80 258, 83 282, 90 305
-               L 98 344
-               Q 104 364 110 364
-               Q 116 364 122 344
-               L 130 305
-               C 137 282, 140 258, 139 238
-               C 138 224, 138 210, 140 197
-               C 143 180, 143 160, 142 138
-               L 143 113
-               C 144 98, 144 82, 140 66
-               C 135 48, 125 32, 110 22 Z"
-            fill="rgba(15,23,42,0.8)"
-            stroke="rgba(148,163,184,0.7)"
-            stroke-width="1.2"
-          />
-
-          <!-- Baş (arka) -->
-          <circle cx="110" cy="36" r="17"
-                  fill="rgba(15,23,42,0.9)"
-                  stroke="rgba(148,163,184,0.7)"
-                  stroke-width="1.2"/>
-
-          <!-- Omuz & trapez -->
-          <path class="muscle-region" data-muscle="back"
-                d="M86 70 Q110 55 134 70
-                   Q130 82 124 90
-                   Q110 96 96 90
-                   Q90 82 86 70 Z" />
-
-          <!-- Kanat (latissimus dorsi / sırt yanları) -->
-          <path class="muscle-region" data-muscle="back"
-                d="M82 90
-                   Q70 112 68 136
-                   Q69 150 73 162
-                   Q83 168 90 170
-                   Q96 158 100 143
-                   Q100 128 98 116 Z" />
-          <path class="muscle-region" data-muscle="back"
-                d="M138 90
-                   Q150 112 152 136
-                   Q151 150 147 162
-                   Q137 168 130 170
-                   Q124 158 120 143
-                   Q120 128 122 116 Z" />
-
-          <!-- Alt sırt (erector spinae) -->
-          <rect class="muscle-region" data-muscle="lowerBack"
-                x="94" y="150" width="32" height="40" rx="7" ry="7" />
-
-          <!-- Kalça (glutes) -->
-          <path class="muscle-region" data-muscle="glutes"
-                d="M88 190
-                   Q99 204 110 206
-                   Q121 204 132 190
-                   Q136 196 137 204
-                   Q132 218 121 228
-                   Q110 232 99 228
-                   Q88 218 83 204
-                   Q84 196 88 190 Z" />
-
-          <!-- Hamstring (arka uyluk) -->
-          <rect class="muscle-region" data-muscle="hamstrings"
-                x="88"  y="228" width="20" height="64" rx="9" ry="9" />
-          <rect class="muscle-region" data-muscle="hamstrings"
-                x="112" y="228" width="20" height="64" rx="9" ry="9" />
-
-          <!-- Baldır (arka) -->
-          <rect class="muscle-region" data-muscle="calves"
-                x="90"  y="296" width="18" height="52" rx="8" ry="8" />
-          <rect class="muscle-region" data-muscle="calves"
-                x="112" y="296" width="18" height="52" rx="8" ry="8" />
-
-          <text x="110" y="390" text-anchor="middle" class="body-label">
-            Arka görünüm • Sırt, kalça ve arka bacak kasları
-          </text>
-        </svg>
-      </div>
+      <h2>3D Vücut Modeli</h2>
+      <p class="body-sub">
+        Fareyle sürükleyerek vücudu döndürebilir, kas bölgelerine tıklayarak sağ tarafta detaylarını görebilirsin.
+      </p>
+      <div id="sceneContainer"></div>
     </section>
 
-    <!-- Bilgi Paneli -->
+    <!-- BİLGİ PANELİ -->
     <section class="info-panel">
       <div class="info-header">
         <div class="info-header-title">
-          <div class="info-muscle-name" id="muscleName">Bir kas grubu seç</div>
+          <div class="info-muscle-name" id="muscleName">Bir bölge seç</div>
           <div class="info-muscle-sub" id="muscleLatin">
-            Ön veya arka görünümden bir bölgeye tıkla.
+            Göğüs, sırt, omuz, kol, bacak gibi bölgelerin üzerine tıkla.
           </div>
         </div>
         <div class="chip-row" id="chipRow">
@@ -505,207 +267,385 @@
       <div class="info-section">
         <h3>Bu kasın temel görevi</h3>
         <p id="muscleFunction">
-          Kaslara tıkladıkça, duruş, hareket ve spor performansındaki görevlerini burada göreceksin.
-          Ön/arka görünüm arasında geçiş yaparak vücudu daha bütünsel görebilirsin.
+          Ortadaki 3D modeli döndürerek vücudu farklı açılardan inceleyebilir, kaslara tıklayarak görevlerini öğrenebilirsin.
+          Model basitleştirilmiş olsa da kas grupları gerçek anatomi mantığına göre bölünmüştür.
         </p>
       </div>
 
       <div class="info-section">
         <h3>Bu kasları çalıştırırsan neler olur?</h3>
         <ul id="muscleBenefits">
-          <li>Güç, estetik ve sağlık etkilerini liste halinde gösterir.</li>
-          <li>Hangi hareketlerde aktif olduğunu öğrenip antrenman planını buna göre kurabilirsin.</li>
+          <li>Güç, estetik ve spor performansına etkilerini burada göreceksin.</li>
+          <li>Hangi hareketlerde aktif olduklarını bilerek antrenman planını daha bilinçli yapabilirsin.</li>
         </ul>
       </div>
 
       <p class="hint">
-        İpucu: Aynı kas grubuna ait birden fazla bölge varsa (örneğin sağ/sol baldır),
-        tıkladığında hepsi birlikte vurgulanır.
+        İpucu: Boş bir yere tıklarsan, seçili kas vurgusu kalkar ve genel bilgi ekranına geri dönersin.
       </p>
 
       <p class="footer-note">
-        Not: Bilgiler genel spor &amp; anatomi bilgisidir, tıbbi tavsiye yerine geçmez.
+        Not: Bu site eğitim amaçlıdır, tıbbi tavsiye yerine geçmez.
       </p>
     </section>
   </main>
 
-  <script>
-    const muscleData = {
-      chest: {
-        name: "Göğüs Kasları",
-        latin: "Pectoralis Major / Minor",
-        function:
-          "Göğüs kasları, itme hareketlerinin ana motorudur. Kollarını öne doğru iterken, şınav, bench press ve göğüs fly gibi hareketlerde yoğun olarak çalışır.",
-        tags: ["İtme gücü", "Üst vücut genişliği", "Postür"],
-        benefits: [
-          "Üst vücudu daha dolu ve atletik gösterir.",
-          "Şınav, bench press gibi itiş kuvveti gerektiren hareketlerde performansı artırır.",
-          "Omuz çevresini destekleyerek üst beden stabilitesine katkı sağlar.",
-          "Boks, basketbol, voleybol gibi sporlarda itme ve şut atma hareketlerinde güç kazandırır."
-        ]
-      },
-      shoulders: {
-        name: "Omuz Kasları",
-        latin: "Deltoid Kas Grubu",
-        function:
-          "Omuz kasları, kolunu yukarı kaldırma, yana açma ve öne/arkaya savurma gibi hareketlerin merkezindedir. Neredeyse tüm üst vücut egzersizlerinde stabilizör olarak görev yapar.",
-        tags: ["Geniş omuz", "Stabilite", "Çok yönlü hareket"],
-        benefits: [
-          "Omuz genişliğini artırarak daha V şekilli bir görünüm sağlar.",
-          "Üst vücut egzersizlerinde dengeyi artırır, sakatlık riskini azaltır.",
-          "Günlük hayatta yük kaldırma, uzanma gibi hareketleri daha kolay hale getirir.",
-          "Push press, overhead press gibi hareketlerde güç kazandırır."
-        ]
-      },
-      biceps: {
-        name: "Ön Kol (Biseps)",
-        latin: "Biceps Brachii",
-        function:
-          "Biseps, dirseği bükme ve ön kolu döndürme hareketlerinde aktiftir. Çekiş içeren çoğu harekette (barfiks, row, curl) devrededir.",
-        tags: ["Kol hacmi", "Çekiş gücü", "Estetik"],
-        benefits: [
-          "Kolların daha dolu ve kaslı görünmesini sağlar.",
-          "Barfiks, row gibi çekiş hareketlerinde güç kazandırır.",
-          "Günlük hayatta çanta, market poşeti, yük taşıma gibi işlerde dirsek bükme gücünü artırır.",
-          "Kol definisyonu ve damar görünümü için önemli bir kas grubudur."
-        ]
-      },
-      triceps: {
-        name: "Arka Kol (Triseps)",
-        latin: "Triceps Brachii",
-        function:
-          "Triseps, dirseği açmaktan sorumludur. İtiş hareketlerinin büyük bölümünde (şınavın itiş kısmı, bench press, dips) aktif rol oynar.",
-        tags: ["Kol kalınlığı", "İtiş gücü", "Kilitlenme"],
-        benefits: [
-          "Kolların arka kısmını doldurarak kol çevresinin büyük kısmını oluşturur.",
-          "Şınav, bench press ve dips gibi itme hareketlerinde güç ve tekrar sayısını artırır.",
-          "Dirsek eklemini stabil tutarak sakatlık riskini azaltmaya yardımcı olur.",
-          "Güç sporlarında barı kilitleme (lock-out) kısmında performansı yükseltir."
-        ]
-      },
-      abs: {
-        name: "Karın Kasları",
-        latin: "Rectus Abdominis & Core",
-        function:
-          "Karın kasları, gövdenin öne bükülmesi, dengede kalması ve omurganın korunmasında görev alır. Core bölgesinin önemli bir parçasıdır.",
-        tags: ["Core", "Duruş", "Denge"],
-        benefits: [
-          "Daha dik bir duruş ve güçlü bir merkez bölge sağlar.",
-          "Bel bölgesini destekleyerek ağır kaldırmalarda koruyucu rol oynar.",
-          "Spor performansını (koşu, zıplama, yön değiştirme) belirgin şekilde iyileştirir.",
-          "Yağ oranı düştüğünde estetik olarak “baklava” görüntüsü oluşturur."
-        ]
-      },
-      hip: {
-        name: "Ön Kalça / Kasık Bölgesi",
-        latin: "Hip Flexors",
-        function:
-          "Kalça fleksörleri, bacağı öne doğru kaldırma hareketinde aktiftir. Koşu, sprint ve yüksek diz kaldırmalı hareketlerde önemli rol oynar.",
-        tags: ["Koşu mekaniği", "Diz kaldırma", "Hız"],
-        benefits: [
-          "Koşu tekniğini ve adım frekansını iyileştirmeye yardımcı olur.",
-          "Sıçrama ve sprint başlangıcında patlayıcı güce destek sağlar.",
-          "Uzun süre oturan kişilerde sıkılan bölge olduğu için esnetilip güçlendirilmesi duruşu iyileştirir."
-        ]
-      },
-      glutes: {
-        name: "Kalça Kasları",
-        latin: "Gluteus Maximus / Medius",
-        function:
-          "Kalça kasları; kalça eklemini geriye açma, yana açma ve stabil tutma görevlerini üstlenir. Koşu, zıplama, squat ve deadlift gibi hareketlerin merkezindedir.",
-        tags: ["Güç merkezi", "Hız", "Atletik görünüm"],
-        benefits: [
-          "Alt vücut gücünü ciddi anlamda artırır.",
-          "Koşu hızını, sıçrama yüksekliğini ve çevikliği destekler.",
-          "Kalça ve bel bölgesinin stabilitesini artırarak sakatlık riskini düşürür.",
-          "Alt vücut estetiğinde en belirgin kas gruplarından biridir."
-        ]
-      },
-      quads: {
-        name: "Ön Bacak (Quadriceps)",
-        latin: "Quadriceps Femoris",
-        function:
-          "Quadriceps, diz eklemini açma görevini üstlenir. Yürüme, koşma, merdiven çıkma, oturup kalkma gibi temel hareketlerde sürekli çalışır.",
-        tags: ["Güç", "Koşu & zıplama", "Taşıma"],
-        benefits: [
-          "Squat, lunge, leg press gibi hareketlerde itiş gücünün büyük kısmını sağlar.",
-          "Koşu ve zıplama performansını artırır.",
-          "Günlük hayatta merdiven inip çıkmayı, oturup kalkmayı kolaylaştırır.",
-          "Bacakların dolu, güçlü ve atletik görünmesine katkı sağlar."
-        ]
-      },
-      calves: {
-        name: "Baldır Kasları",
-        latin: "Gastrocnemius & Soleus",
-        function:
-          "Baldır kasları, ayak bileğini aşağı doğru itmekten sorumludur. Yürüme, koşma, zıplama ve denge için kritik önem taşır.",
-        tags: ["Denge", "Patlayıcı güç", "Detay estetik"],
-        benefits: [
-          "Koşu ve sprint performansını artırır, yön değiştirmeyi kolaylaştırır.",
-          "Ayakta uzun süre dururken dengeyi ve konforu artırır.",
-          "Zıplama yüksekliği ve patlayıcı güce katkı sağlar.",
-          "Bacak estetiğinde alt kısmın dolu ve oranlı görünmesini sağlar."
-        ]
-      },
-      back: {
-        name: "Üst & Orta Sırt Kasları",
-        latin: "Trapezius, Rhomboids, Latissimus",
-        function:
-          "Sırt kasları, kürek kemiklerinin hareketi ve omurganın dik durmasından sorumludur. Çekiş hareketlerinin büyük çoğunluğunda (barfiks, row) aktiftir.",
-        tags: ["Duruş", "Çekiş gücü", "Genişlik"],
-        benefits: [
-          "Daha dik bir duruş ve daha geniş bir üst vücut sağlar.",
-          "Barfiks, row gibi çekiş egzersizlerinde güç ve tekrar sayısını artırır.",
-          "Omuz sağlığını destekleyerek öne düşmüş omuz postürünü düzeltmeye yardımcı olur.",
-          "Kanat kasları geliştiğinde arkadan V şekli görünümünü güçlendirir."
-        ]
-      },
-      lowerBack: {
-        name: "Alt Sırt Kasları",
-        latin: "Erector Spinae",
-        function:
-          "Alt sırt kasları, omurgayı dik ve stabil tutar. Özellikle hinge hareketlerinde (deadlift, good morning) kritik görev üstlenir.",
-        tags: ["Core arka tarafı", "Stabilite", "Bel sağlığı"],
-        benefits: [
-          "Ağır kaldırışlarda gövdenin öne katlanmasını engelleyerek güvenli formu destekler.",
-          "Uzun süre ayakta durma veya oturmada belin daha az yorulmasına yardımcı olur.",
-          "Hareket sırasında omurgayı kontrol altında tutarak sakatlık riskini azaltır."
-        ]
-      },
-      hamstrings: {
-        name: "Arka Uyluk (Hamstring)",
-        latin: "Biceps Femoris, Semitendinosus, Semimembranosus",
-        function:
-          "Hamstring kasları diz eklemini bükme ve kalçayı geriye açma hareketlerinden sorumludur. Koşu, sprint ve zıplama için temel kas grubudur.",
-        tags: ["Hız", "Patlayıcı güç", "Denge"],
-        benefits: [
-          "Koşu hızını ve sprint patlayıcılığını ciddi şekilde etkiler.",
-          "Squat ve deadlift gibi hareketlerde kalça itişine destek olur.",
-          "Diz eklemini arka taraftan destekleyerek sakatlık riskini azaltır.",
-          "Bacağın arka tarafını doldurarak daha dengeli bir bacak estetiği sağlar."
-        ]
-      }
-    };
+  <!-- Three.js kodu -->
+  <script type="module">
+    import * as THREE from "https://unpkg.com/three@0.164.0/build/three.module.js";
+    import { OrbitControls } from "https://unpkg.com/three@0.164.0/examples/jsm/controls/OrbitControls.js";
 
+    // ---- DOM Referansları ----
+    const container = document.getElementById("sceneContainer");
     const muscleNameEl = document.getElementById("muscleName");
     const muscleLatinEl = document.getElementById("muscleLatin");
     const muscleFunctionEl = document.getElementById("muscleFunction");
     const muscleBenefitsEl = document.getElementById("muscleBenefits");
     const chipRowEl = document.getElementById("chipRow");
 
-    const regions = document.querySelectorAll(".muscle-region");
+    // ---- Kas Bilgileri ----
+    const muscleData = {
+      chest: {
+        name: "Göğüs Kasları",
+        latin: "Pectoralis Major / Minor",
+        function:
+          "İtme hareketlerinin ana motorudur. Şınav, bench press, göğüs press ve fly gibi hareketlerde yoğun çalışır.",
+        tags: ["İtme gücü", "Üst vücut genişliği", "Postür"],
+        benefits: [
+          "Üst vücudu daha geniş ve dolu gösterir.",
+          "İtme hareketlerinde (şınav, bench press) güç ve tekrar sayısını artırır.",
+          "Omuz çevresini destekleyerek üst beden stabilitesine katkı sağlar."
+        ]
+      },
+      back: {
+        name: "Sırt Kasları",
+        latin: "Latissimus Dorsi, Trapezius, Rhomboids",
+        function:
+          "Çekiş hareketlerinin merkezidir. Barfiks, row, deadlift gibi hareketlerde aktif rol oynar ve duruşu dik tutar.",
+        tags: ["Duruş", "Çekiş gücü", "V şekli"],
+        benefits: [
+          "Daha dik bir duruş ve sağlıklı bir omurga sağlar.",
+          "Barfiks, row gibi çekiş egzersizlerinde performansı yükseltir.",
+          "Kanat kasları sayesinde V şeklinde bir üst vücut görünümü verir."
+        ]
+      },
+      shoulders: {
+        name: "Omuz Kasları",
+        latin: "Deltoid",
+        function:
+          "Kolları yana, öne ve arkaya kaldırma hareketlerinden sorumludur. Hemen hemen tüm üst vücut antrenmanlarında stabilizör olarak görev yapar.",
+        tags: ["Geniş omuz", "Stabilite", "Çok yönlü hareket"],
+        benefits: [
+          "Omuz genişliğini artırarak daha atletik bir silüet oluşturur.",
+          "Üst vücut hareketlerinde eklem stabilitesini artırır.",
+          "Overhead press, push press gibi hareketlerde güç kazandırır."
+        ]
+      },
+      biceps: {
+        name: "Ön Kol (Biseps)",
+        latin: "Biceps Brachii",
+        function:
+          "Dirseği bükme ve ön kolu döndürme görevini üstlenir. Çoğu çekiş hareketinde (barfiks, row) aktif rol oynar.",
+        tags: ["Kol hacmi", "Çekiş gücü", "Estetik"],
+        benefits: [
+          "Kolların daha dolu ve kaslı görünmesini sağlar.",
+          "Çekiş hareketlerinde daha fazla tekrar ve ağırlık kullanılmasına yardımcı olur.",
+          "Günlük hayatta yük taşıma işlerinde dirsek bükme gücünü artırır."
+        ]
+      },
+      triceps: {
+        name: "Arka Kol (Triseps)",
+        latin: "Triceps Brachii",
+        function:
+          "Dirseği düzleştirme hareketini yapar. İtiş hareketlerinin kilit noktasında görev alır.",
+        tags: ["Kol kalınlığı", "İtiş gücü", "Kilitlenme"],
+        benefits: [
+          "Kol çevresinin büyük kısmını oluşturduğu için kol kalınlığını ciddi artırır.",
+          "Şınav, bench press, dips gibi hareketlerde itiş gücünü yükseltir.",
+          "Dirseğin stabilitesini artırarak sakatlık riskini azaltır."
+        ]
+      },
+      abs: {
+        name: "Karın / Core",
+        latin: "Rectus Abdominis, Obliques, Core",
+        function:
+          "Gövdenin bükülmesi, rotasyonu ve dengede durmasında görev alır. Omurgayı koruyan merkez bölgedir.",
+        tags: ["Core", "Denge", "Duruş"],
+        benefits: [
+          "Bel bölgesini destekleyerek ağır kaldırmalarda gövdeyi korur.",
+          "Daha dik ve estetik bir duruş sağlar.",
+          "Spor performansında (koşu, yön değiştirme, sıçrama) ciddi rol oynar."
+        ]
+      },
+      glutes: {
+        name: "Kalça Kasları",
+        latin: "Gluteus Maximus / Medius",
+        function:
+          "Kalça eklemini geriye açma ve stabil tutma görevini üstlenir. Squat, deadlift, hip thrust gibi hareketlerin merkezindedir.",
+        tags: ["Güç merkezi", "Hız", "Atletik görünüm"],
+        benefits: [
+          "Alt vücut kuvvetini ciddi şekilde artırır.",
+          "Koşu hızı ve sıçrama performansını iyileştirir.",
+          "Bel ve kalça çevresine stabilite sağlayarak sakatlık riskini azaltır."
+        ]
+      },
+      quads: {
+        name: "Ön Bacak (Quadriceps)",
+        latin: "Quadriceps Femoris",
+        function:
+          "Diz eklemini açma görevini üstlenir. Yürüme, koşma, merdiven çıkma gibi temel hareketlerde sürekli çalışır.",
+        tags: ["Güç", "Koşu & zıplama", "Taşıma"],
+        benefits: [
+          "Squat ve lunge gibi hareketlerde ana itiş gücünü sağlar.",
+          "Merdiven çıkma, çömelip kalkma gibi günlük hareketleri kolaylaştırır.",
+          "Bacakların dolu ve güçlü görünmesine katkı sağlar."
+        ]
+      },
+      hamstrings: {
+        name: "Arka Uyluk (Hamstring)",
+        latin: "Hamstring Group",
+        function:
+          "Dizi bükme ve kalçayı geriye itme hareketinde rol oynar. Koşu ve sprintin patlayıcı kısmında çok aktiftir.",
+        tags: ["Hız", "Patlayıcı güç", "Denge"],
+        benefits: [
+          "Sprint ve ani hızlanmalarda performansı artırır.",
+          "Kalça itişli hareketlerde (deadlift, hip hinge) destek sağlar.",
+          "Diz ekleminin arka tarafını koruyarak sakatlık riskini azaltır."
+        ]
+      },
+      calves: {
+        name: "Baldır Kasları",
+        latin: "Gastrocnemius & Soleus",
+        function:
+          "Ayak bileğini aşağı itmekten sorumludur. Yürüme, koşma, zıplama ve ayakta durmada denge sağlar.",
+        tags: ["Denge", "Patlayıcı güç", "Detay estetik"],
+        benefits: [
+          "Koşu ve zıplama performansını iyileştirir.",
+          "Uzun süre ayakta kalırken denge ve konfor sağlar.",
+          "Bacakların alt kısmında oranlı ve estetik bir görünüm verir."
+        ]
+      }
+    };
 
-    function clearActive() {
-      regions.forEach((r) => r.classList.remove("active"));
+    // ---- Three.js Kurulumu ----
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x020617);
+
+    const camera = new THREE.PerspectiveCamera(
+      40,
+      container.clientWidth / container.clientHeight,
+      0.1,
+      100
+    );
+    camera.position.set(0, 1.6, 5);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    container.appendChild(renderer.domElement);
+
+    // Işıklar
+    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x111827, 0.9);
+    scene.add(hemiLight);
+
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.9);
+    dirLight.position.set(3, 6, 4);
+    scene.add(dirLight);
+
+    const backLight = new THREE.DirectionalLight(0xffffff, 0.4);
+    backLight.position.set(-2, 4, -4);
+    scene.add(backLight);
+
+    // Zemin için hafif grid (sadece görsel)
+    const grid = new THREE.GridHelper(8, 16, 0x1f2933, 0x111827);
+    grid.position.y = -1.4;
+    scene.add(grid);
+
+    // ---- Vücut Modeli (Basitleştirilmiş İnsan) ----
+    const bodyGroup = new THREE.Group();
+    scene.add(bodyGroup);
+
+    const clickableMeshes = [];
+
+    function createPart(geometry, color, muscleKey, position) {
+      const mat = new THREE.MeshStandardMaterial({
+        color,
+        metalness: 0.05,
+        roughness: 0.45
+      });
+      const mesh = new THREE.Mesh(geometry, mat);
+      mesh.position.copy(position);
+      mesh.userData.muscleKey = muscleKey;
+      bodyGroup.add(mesh);
+      if (muscleKey) clickableMeshes.push(mesh);
+      return mesh;
     }
 
-    function renderMuscle(muscleKey) {
+    // Gövde temel yüksekliği
+    const torsoHeight = 1.6;
+
+    // Göğüs / gövde
+    createPart(
+      new THREE.BoxGeometry(0.9, 0.6, 0.4),
+      0x1d4ed8,
+      "chest",
+      new THREE.Vector3(0, torsoHeight, 0)
+    );
+
+    // Karın / core
+    createPart(
+      new THREE.BoxGeometry(0.7, 0.5, 0.35),
+      0x1e40af,
+      "abs",
+      new THREE.Vector3(0, torsoHeight - 0.6, 0)
+    );
+
+    // Sırt (orta)
+    createPart(
+      new THREE.BoxGeometry(0.95, 0.5, 0.2),
+      0x1e3a8a,
+      "back",
+      new THREE.Vector3(0, torsoHeight + 0.1, -0.1)
+    );
+
+    // Alt sırt / glute bölgesi
+    createPart(
+      new THREE.BoxGeometry(0.8, 0.4, 0.4),
+      0x4b5563,
+      "glutes",
+      new THREE.Vector3(0, torsoHeight - 1.0, 0)
+    );
+
+    // Baş
+    createPart(
+      new THREE.SphereGeometry(0.25, 32, 32),
+      0x0f172a,
+      null,
+      new THREE.Vector3(0, torsoHeight + 0.75, 0)
+    );
+
+    // Omuzlar (sağ-sol, shoulders)
+    createPart(
+      new THREE.BoxGeometry(0.3, 0.25, 0.35),
+      0x2563eb,
+      "shoulders",
+      new THREE.Vector3(-0.6, torsoHeight + 0.2, 0)
+    );
+    createPart(
+      new THREE.BoxGeometry(0.3, 0.25, 0.35),
+      0x2563eb,
+      "shoulders",
+      new THREE.Vector3(0.6, torsoHeight + 0.2, 0)
+    );
+
+    // Üst kollar (biceps/triceps birlikte)
+    createPart(
+      new THREE.CapsuleGeometry(0.16, 0.55, 16, 24),
+      0x22c55e,
+      "biceps",
+      new THREE.Vector3(-0.95, torsoHeight - 0.1, 0)
+    );
+    createPart(
+      new THREE.CapsuleGeometry(0.16, 0.55, 16, 24),
+      0x22c55e,
+      "biceps",
+      new THREE.Vector3(0.95, torsoHeight - 0.1, 0)
+    );
+
+    // Alt kollar (triceps ağırlıklı düşün)
+    createPart(
+      new THREE.CapsuleGeometry(0.14, 0.5, 16, 24),
+      0x16a34a,
+      "triceps",
+      new THREE.Vector3(-0.95, torsoHeight - 0.8, 0)
+    );
+    createPart(
+      new THREE.CapsuleGeometry(0.14, 0.5, 16, 24),
+      0x16a34a,
+      "triceps",
+      new THREE.Vector3(0.95, torsoHeight - 0.8, 0)
+    );
+
+    // Üst bacaklar (quads)
+    createPart(
+      new THREE.CapsuleGeometry(0.22, 0.8, 16, 24),
+      0xf97316,
+      "quads",
+      new THREE.Vector3(-0.3, torsoHeight - 1.6, 0.05)
+    );
+    createPart(
+      new THREE.CapsuleGeometry(0.22, 0.8, 16, 24),
+      0xf97316,
+      "quads",
+      new THREE.Vector3(0.3, torsoHeight - 1.6, 0.05)
+    );
+
+    // Arka uyluk (hamstring) - biraz arkaya konumlandır
+    createPart(
+      new THREE.CapsuleGeometry(0.19, 0.7, 16, 24),
+      0xc2410c,
+      "hamstrings",
+      new THREE.Vector3(-0.3, torsoHeight - 1.7, -0.18)
+    );
+    createPart(
+      new THREE.CapsuleGeometry(0.19, 0.7, 16, 24),
+      0xc2410c,
+      "hamstrings",
+      new THREE.Vector3(0.3, torsoHeight - 1.7, -0.18)
+    );
+
+    // Baldırlar (calves)
+    createPart(
+      new THREE.CapsuleGeometry(0.16, 0.6, 16, 24),
+      0x65a30d,
+      "calves",
+      new THREE.Vector3(-0.3, torsoHeight - 2.45, 0)
+    );
+    createPart(
+      new THREE.CapsuleGeometry(0.16, 0.6, 16, 24),
+      0x65a30d,
+      "calves",
+      new THREE.Vector3(0.3, torsoHeight - 2.45, 0)
+    );
+
+    // Vücudu biraz yukarı al
+    bodyGroup.position.y = -0.3;
+
+    // ---- Orbit Controls (Fare ile döndürme) ----
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.target.set(0, torsoHeight - 0.3, 0);
+
+    // Fazla zoom'u engelle
+    controls.minDistance = 3;
+    controls.maxDistance = 8;
+
+    // Döndürme sınırı (yukarıdan/alt açıdan çok bozulmasın)
+    controls.minPolarAngle = Math.PI * 0.15;
+    controls.maxPolarAngle = Math.PI * 0.85;
+
+    // ---- Raycaster (tıklama ile kas seçimi) ----
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    let autoRotate = true;
+
+    function clearSelection() {
+      clickableMeshes.forEach((mesh) => {
+        mesh.material.emissive = new THREE.Color(0x000000);
+      });
+    }
+
+    function selectMuscle(muscleKey) {
       const data = muscleData[muscleKey];
       if (!data) return;
 
-      clearActive();
-      regions.forEach((r) => {
-        if (r.dataset.muscle === muscleKey) r.classList.add("active");
+      clearSelection();
+      clickableMeshes.forEach((mesh) => {
+        if (mesh.userData.muscleKey === muscleKey) {
+          mesh.material.emissive = new THREE.Color(0x22c55e);
+          mesh.material.emissiveIntensity = 0.35;
+        }
       });
 
       muscleNameEl.textContent = data.name;
@@ -728,35 +668,79 @@
       });
     }
 
-    regions.forEach((region) => {
-      region.addEventListener("click", () => {
-        const key = region.dataset.muscle;
-        renderMuscle(key);
+    function resetInfo() {
+      clearSelection();
+      muscleNameEl.textContent = "Bir bölge seç";
+      muscleLatinEl.textContent = "Göğüs, sırt, omuz, kol, bacak gibi bölgelerin üzerine tıkla.";
+      muscleFunctionEl.textContent =
+        "Ortadaki 3D modeli döndürerek vücudu farklı açılardan inceleyebilir, kaslara tıklayarak görevlerini öğrenebilirsin.";
+      muscleBenefitsEl.innerHTML = "";
+      const li1 = document.createElement("li");
+      li1.textContent =
+        "Güç, estetik ve spor performansına etkilerini burada göreceksin.";
+      const li2 = document.createElement("li");
+      li2.textContent =
+        "Hangi hareketlerde aktif olduklarını bilerek antrenman planını daha bilinçli yapabilirsin.";
+      muscleBenefitsEl.appendChild(li1);
+      muscleBenefitsEl.appendChild(li2);
+
+      chipRowEl.innerHTML = "";
+      ["Görünüm", "Güç", "Performans"].forEach((t) => {
+        const span = document.createElement("span");
+        span.className = "chip";
+        span.textContent = t;
+        chipRowEl.appendChild(span);
       });
+    }
+
+    // Tıklama olayı
+    function onClick(event) {
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(clickableMeshes, false);
+
+      if (intersects.length > 0) {
+        const mesh = intersects[0].object;
+        const key = mesh.userData.muscleKey;
+        if (key) {
+          autoRotate = false;
+          selectMuscle(key);
+        }
+      } else {
+        autoRotate = true;
+        resetInfo();
+      }
+    }
+
+    renderer.domElement.addEventListener("click", onClick);
+
+    // Eğer kullanıcı modeli oynatıyorsa otomatik dönmeyi biraz durdur
+    controls.addEventListener("start", () => {
+      autoRotate = false;
     });
 
-    // Ön / Arka görünüm butonları
-    const viewButtons = document.querySelectorAll(".view-btn");
-    const frontWrapper = document.querySelector('[data-view="front"]');
-    const backWrapper  = document.querySelector('[data-view="back"]');
+    // ---- Animasyon Döngüsü ----
+    function animate() {
+      requestAnimationFrame(animate);
 
-    viewButtons.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const target = btn.dataset.target;
+      if (autoRotate) {
+        bodyGroup.rotation.y += 0.005;
+      }
 
-        viewButtons.forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
 
-        if (target === "front") {
-          frontWrapper.style.display = "flex";
-          backWrapper.style.display = "none";
-        } else {
-          frontWrapper.style.display = "none";
-          backWrapper.style.display = "flex";
-        }
-
-        clearActive();
-      });
+    // ---- Yeniden boyutlandırma ----
+    window.addEventListener("resize", () => {
+      const { clientWidth, clientHeight } = container;
+      camera.aspect = clientWidth / clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(clientWidth, clientHeight);
     });
   </script>
 </body>
